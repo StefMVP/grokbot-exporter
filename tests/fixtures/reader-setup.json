@@ -1,0 +1,9 @@
+{
+  "skills": {"ok": true, "value": [
+    {"id": "daily-review", "description": "Read the current project notes.", "body": "Read notes.md and list open tasks.", "source": "workflow"},
+    {"id": "vendor-wrapper", "description": "Source shell wrapper.", "body": "Use the source shell.", "source": "managed"}
+  ]},
+  "routines": {"ok": true, "value": [
+    {"id": "daily", "name": "Daily review", "prompt": "Read the current notes.", "isEnabled": true, "trigger": {"type": "schedule", "schedule": "CRON_TZ=America/Chicago 0 8 * * *"}}
+  ]}
+}

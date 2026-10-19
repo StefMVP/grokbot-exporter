@@ -1,0 +1,7 @@
+{
+  "agents": [
+    {"id": "reader", "name": "Reader", "description": "Read project notes.", "createdAt": 100, "avatarColor": "violet", "avatarShape": "hex"},
+    {"id": "writer", "name": "Writer", "description": "Write short project updates.", "createdAt": 200}
+  ],
+  "capturedAt": "2026-01-01T12:00:00Z"
+}

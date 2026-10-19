@@ -1,0 +1,4 @@
+include config.example.json
+recursive-include grokbot_exporter/adapters *.md
+recursive-include scripts *.py
+recursive-include tests *.py *.js *.json

@@ -1,0 +1,10 @@
+{
+  "complete": true,
+  "entries": [
+    {"id": "question", "seq": 1, "kind": "message", "timestampMs": 101, "content": "Please review the project notes."},
+    {"id": "notes", "seq": 2, "kind": "user-attachment", "timestampMs": 102, "file_path": "/workspace/notes.md", "file_name": "notes.md"},
+    {"id": "answer", "seq": 3, "kind": "send-message", "timestampMs": 103, "message": {"type": "text", "content": "The notes contain two open tasks."}, "reactions": [{"emoji": "👍", "by": "me"}]},
+    {"id": "image", "seq": 4, "kind": "send-message", "timestampMs": 104, "message": {"type": "attachment", "url": "/home/box/agent-data/agents/reader/attachments/chart.png", "file_name": "chart.png"}},
+    {"id": "event", "seq": 5, "kind": "tool-event", "timestampMs": 105, "event": {"tool": "read_file", "result": "Read notes.md"}}
+  ]
+}

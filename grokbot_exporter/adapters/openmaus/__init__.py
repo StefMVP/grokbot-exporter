@@ -1,0 +1,1 @@
+"""Optional OpenMaus migration adapter."""

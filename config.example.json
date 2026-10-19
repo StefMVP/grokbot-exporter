@@ -1,0 +1,9 @@
+{
+  "modelSelection": {"instanceId": "your-local-instance", "model": "your-model"},
+  "bindings": {},
+  "botFolders": {},
+  "skillSourcesEnabled": ["workflow"],
+  "chiefOfStaff": [],
+  "routineReplacements": [],
+  "runtimeNotes": []
+}
