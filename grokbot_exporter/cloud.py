@@ -9,7 +9,7 @@ import re
 import stat
 import zipfile
 from .archive import update_manifest, write_private
-from .capture import Browser
+from .capture import Browser, DEFAULT_DELAY, check_delay
 
 
 def safe_member(name: str) -> bool:
@@ -51,8 +51,10 @@ def extract(archive: Path, destination: Path) -> dict:
     return inventory
 
 
-def pull_cloud(session: str, remote: str, output: Path, bot_id: str) -> dict:
-    browser = Browser(session)
+def pull_cloud(session: str, remote: str, output: Path, bot_id: str,
+               delay: float = DEFAULT_DELAY) -> dict:
+    check_delay(delay)
+    browser = Browser(session, delay)
     response = browser.read('text', id=bot_id, path=remote + '/manifest.json')
     if not response or response.get('truncated'):
         raise ValueError('The cloud export manifest is absent or incomplete')

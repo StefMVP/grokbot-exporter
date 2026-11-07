@@ -2,9 +2,21 @@
 from __future__ import annotations
 import json
 from pathlib import Path
+import random
 import subprocess
+import time
 from typing import Any
 from .archive import source_id, update_manifest, write_private
+
+DEFAULT_DELAY = 1.0
+MIN_DELAY = 0.5
+MAX_JITTER = 0.3
+
+
+def check_delay(delay: float) -> float:
+    if not isinstance(delay, (int, float)) or delay < MIN_DELAY:
+        raise ValueError(f'Use a read delay of at least {MIN_DELAY} seconds')
+    return float(delay)
 
 
 def parse_cli_result(output: str) -> Any:
@@ -17,11 +29,21 @@ def parse_cli_result(output: str) -> Any:
 
 
 class Browser:
-    def __init__(self, session: str):
+    def __init__(self, session: str, delay: float = DEFAULT_DELAY):
         self.session = session
         self.bridge = Path(__file__).with_name('capture.js').read_text()
+        self.delay = check_delay(delay)
+        self.next_read = 0.0
+
+    def pace(self) -> None:
+        now = time.monotonic()
+        if now < self.next_read:
+            time.sleep(self.next_read - now)
+            now = time.monotonic()
+        self.next_read = now + self.delay * (1 + random.random() * MAX_JITTER)
 
     def attach_reader(self) -> None:
+        self.pace()
         result = subprocess.run(['playwright-cli', f'-s={self.session}', 'run-code', '--filename',
             str(Path(__file__).with_name('attach_reader.js'))], capture_output=True, text=True, timeout=30)
         if result.returncode:
@@ -29,6 +51,7 @@ class Browser:
         parse_cli_result(result.stdout)
 
     def read(self, operation: str, **args: Any) -> Any:
+        self.pace()
         code = f'async () => await {self.bridge}({json.dumps(dict(operation=operation, **args))})'
         result = subprocess.run(['playwright-cli', f'-s={self.session}', 'eval', code],
                                 capture_output=True, text=True, timeout=120)
@@ -37,16 +60,18 @@ class Browser:
         return parse_cli_result(result.stdout)
 
 
-def capture(session: str, output: Path, only: list[str] | None = None) -> dict:
+def capture(session: str, output: Path, only: list[str] | None = None,
+            delay: float = DEFAULT_DELAY) -> dict:
+    check_delay(delay)
     try:
-        return _capture(session, output, only)
+        return _capture(session, output, only, delay)
     finally:
         if (output / 'roster.json').exists():
             update_manifest(output)
 
 
-def _capture(session: str, output: Path, only: list[str] | None) -> dict:
-    browser = Browser(session)
+def _capture(session: str, output: Path, only: list[str] | None, delay: float) -> dict:
+    browser = Browser(session, delay)
     roster = browser.read('roster')
     write_private(output / 'roster.json', roster)
     browser.attach_reader()

@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 from .archive import verify_export
-from .capture import capture
+from .capture import DEFAULT_DELAY, MIN_DELAY, capture
 from .cloud import pull_cloud
 from .recover import recover
 from .source import launch, stop
@@ -17,14 +17,20 @@ def main() -> None:
     command.add_argument('--session', required=True)
     command.add_argument('--output', required=True, type=Path)
     command.add_argument('--only', action='append')
+    command.add_argument('--delay', type=float, default=DEFAULT_DELAY,
+                         help=f'Seconds between reads, at least {MIN_DELAY} (default {DEFAULT_DELAY})')
     command = sub.add_parser('pull-cloud', help='Download and check a private cloud export')
     command.add_argument('--session', required=True)
     command.add_argument('--remote', default='/workspace/.grokbot-export')
     command.add_argument('--output', required=True, type=Path)
     command.add_argument('--bot-id', required=True)
+    command.add_argument('--delay', type=float, default=DEFAULT_DELAY,
+                         help=f'Seconds between reads, at least {MIN_DELAY} (default {DEFAULT_DELAY})')
     command = sub.add_parser('recover-files', help='Recover chat files absent from the cloud export')
     command.add_argument('--session', required=True)
     command.add_argument('--source', required=True, type=Path)
+    command.add_argument('--delay', type=float, default=DEFAULT_DELAY,
+                         help=f'Seconds between reads, at least {MIN_DELAY} (default {DEFAULT_DELAY})')
     command = sub.add_parser('check', help='Check a saved export without a browser or target app')
     command.add_argument('--source', required=True, type=Path)
     command = sub.add_parser('launch-source', help='Start a separate headless Grok process with a private profile copy (Linux)')
@@ -68,11 +74,11 @@ def main() -> None:
         elif args.command == 'stop-source':
             result = stop(args.output)
         elif args.command == 'capture':
-            result = capture(args.session, args.output, args.only)
+            result = capture(args.session, args.output, args.only, args.delay)
         elif args.command == 'pull-cloud':
-            result = pull_cloud(args.session, args.remote, args.output, args.bot_id)
+            result = pull_cloud(args.session, args.remote, args.output, args.bot_id, args.delay)
         elif args.command == 'recover-files':
-            result = recover(args.session, args.source)
+            result = recover(args.session, args.source, args.delay)
         elif args.command == 'check':
             result = verify_export(args.source)
             if not result['complete']:
