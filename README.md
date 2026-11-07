@@ -30,6 +30,10 @@ This uses a separate profile copy. It saves raw JSON and a manifest with file
 checksums and capture errors. Keep the folder private. The browser copy contains
 sign-in credentials. Capture does not submit prompts or change source schedules.
 
+Every read waits at least 0.5 seconds after the previous one; the default is
+1.0 second with up to 30% jitter. Set `--delay` on `capture`, `pull-cloud` and
+`recover-files` to go slower. The tool does not retry a failed read in a loop.
+
 For cloud files, run [cloud_export.py](grokbot_exporter/cloud_export.py) in the
 source cloud terminal. Use `pull-cloud` and `recover-files` before stopping the
 source process:

@@ -6,11 +6,12 @@ import json
 import os
 from pathlib import Path
 from .archive import source_file, update_manifest, write_private
-from .capture import Browser
+from .capture import Browser, DEFAULT_DELAY, check_delay
 
 
-def recover(session: str, source: Path) -> dict:
-    browser = Browser(session)
+def recover(session: str, source: Path, delay: float = DEFAULT_DELAY) -> dict:
+    check_delay(delay)
+    browser = Browser(session, delay)
     roster = json.loads((source / 'roster.json').read_text())
     records = []
     missing = []

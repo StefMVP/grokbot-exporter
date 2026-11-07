@@ -17,7 +17,8 @@ PROFILE_FILES = ['sand-secrets.json', 'Local State', 'Preferences', 'Cookies', '
 
 
 def launch(app: Path, profile: Path, output: Path, session: str) -> dict:
-    output.mkdir(mode=0o700, parents=True, exist_ok=True)
+    output.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    output.mkdir(mode=0o700, exist_ok=True)
     output.chmod(0o700)
     state_file = output / 'source-process.json'
     if state_file.exists():
